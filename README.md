@@ -20,6 +20,15 @@ Este projeto tem como objetivo explorar a base pública da Olist utilizando SQL 
 
 ---
 
+## O que você encontrará aqui?
+
+- Funções de agregação como COUNT, SUM, AVG, MIN, MAX, ROUND, EXTRACT, TO_CHAR, etc.
+- Cláusulas como SELECT, WHERE, HAVING, GROUP BY, ORDER BY, LEFT JOIN, INNER JOIN, CASE WHEN, LIMIT.
+- Funções de janela como RANK, com ROW, OVER, PARTITION BY.
+- CTEs e subconsultas.
+
+---
+
 ## 🗃️ Fonte de dados
 
 - [Base de dados da Olist no Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
