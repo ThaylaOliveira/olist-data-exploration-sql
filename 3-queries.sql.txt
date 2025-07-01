@@ -1,0 +1,174 @@
+-- 1. Quantos clientes únicos existem no banco de dados?
+
+SELECT 
+  COUNT(DISTINCT(customer_unique_id)) AS clientes_unicos
+FROM `estudo-sql-461713.olist_dados.olist_customer` AS o_costumer;
+-- R: Existem 96.096 clientes únicos no banco de dados.
+
+
+-- 2. Quantos pedidos foram feitos?
+
+SELECT 
+  COUNT(DISTINCT(order_id)) AS contagem_pedidos
+FROM `estudo-sql-461713.olist_dados.olist_orders` AS o_orders;
+-- R: Foram feitos 99.441 pedidos.
+
+
+-- 3. Qual foi a receita total?
+
+SELECT ROUND(SUM(payment_value),2) AS receita_total
+FROM `estudo-sql-461713.olist_dados.olist_order_payments` AS o_payments;
+-- R: Receita total de 16 MI de reais (R$16.008.872,12).
+
+
+-- 4. Quais são as 5 cidades com mais pedidos?
+
+SELECT 
+  c.customer_city AS cidade,
+  COUNT(DISTINCT(o.order_id)) AS pedidos
+FROM `estudo-sql-461713.olist_dados.olist_orders` AS o
+  INNER JOIN `estudo-sql-461713.olist_dados.olist_customer` AS c
+  ON o.customer_id = c.customer_id
+WHERE c.customer_city IS NOT NULL
+GROUP BY cidade
+ORDER BY pedidos DESC
+LIMIT 5;
+
+/*
+As 5 cidades com mais pedidos são:
+1 sao paulo       15540
+2 rio de janeiro   6882
+3 belo horizonte   2773
+4 brasilia         2131
+5 curitiba         1521
+*/
+
+
+-- 5. Quantos pedidos foram entregues em cada estado?
+
+-- a. Checando as siglas dos estados
+SELECT DISTINCT(customer_state)
+FROM `estudo-sql-461713.olist_dados.olist_customer`;
+-- Siglas dos estados está certo
+
+-- b. Checando os status dos pedidos e sua quantidade
+SELECT 
+  order_status AS status,
+  COUNT(order_status) AS quantidade,
+  ROUND(COUNT(order_status) * 100 / (SELECT COUNT(*) FROM `estudo-sql-461713.olist_dados.olist_orders`),2) AS porcentagem
+FROM `estudo-sql-461713.olist_dados.olist_orders`
+GROUP BY order_status
+ORDER BY quantidade DESC;
+-- 97% dos pedidos foram entregues, totalizando 96.478 pedidos.
+
+-- c. Agora vamos analisar por estado
+SELECT 
+  c.customer_state AS estado,
+  COUNT(DISTINCT(o.order_id)) AS pedidos_entregues,
+  ROUND(COUNT(o.order_id) * 100 / (SELECT COUNT(*) FROM `estudo-sql-461713.olist_dados.olist_orders`),2) AS porcentagem 
+FROM `estudo-sql-461713.olist_dados.olist_orders` AS o
+  INNER JOIN `estudo-sql-461713.olist_dados.olist_customer` AS c
+  ON o.customer_id = c.customer_id
+WHERE  
+  c.customer_state IS NOT NULL 
+  AND o.order_status = 'delivered' 
+GROUP BY estado
+ORDER BY pedidos_entregues DESC;
+/*
+Os estados com maior volume de pedidos entregues foram
+SP, RJ, MG, RS e PR.
+Com destaque para SP, que lidera com 40.501 (41%) de pedidos entregues.
+*/
+
+
+-- 6. Qual é o valor médio de pagamento por pedido?
+
+WITH pedidos_unicos AS(
+  SELECT 
+    order_id,
+    SUM(payment_value) as total_pago_pedido
+  FROM estudo-sql-461713.olist_dados.olist_order_payments
+  GROUP BY order_id
+)
+
+SELECT AVG(total_pago_pedido)
+FROM pedidos_unicos;
+
+-- R: O pagamento médio por pedido são R$161
+
+
+-- 7. Quais categorias de produtos têm o maior e o menor volume de vendas?
+
+-- a. Primeiro vamos avaliar as categorias de produtos que existem
+
+SELECT COUNT(DISTINCT product_category_name) AS categoria_produto
+FROM estudo-sql-461713.olist_dados.olist_products
+WHERE product_category_name IS NOT NULL;
+-- Existem 73 categorias
+
+-- b. Vou criar uma CTE com ranking de categorias por número de vendas
+
+WITH ranking_categoria AS (
+  SELECT 
+    p.product_category_name AS categoria_produto,
+    COUNT(DISTINCT o.order_id) AS vendas,
+    RANK() OVER(ORDER BY COUNT(DISTINCT(order_id)) DESC) AS posicao
+  FROM estudo-sql-461713.olist_dados.olist_products AS p
+    INNER JOIN estudo-sql-461713.olist_dados.olist_order_items AS o 
+    ON p.product_id = o.product_id
+  GROUP BY categoria_produto
+  ORDER BY vendas DESC
+) 
+-- c. Subqueries que seleciona só a categoria com mais e menos vendas
+SELECT *
+FROM ranking_categoria
+WHERE vendas = (SELECT MAX(vendas) AS mais_vendas FROM ranking_categoria)
+  OR vendas = (SELECT MIN(vendas) AS menos_vendas FROM ranking_categoria);
+
+-- R: A categoria com mais volume de vendas é cama_mesa_banho (9417) e com menos vendas seguros_e_servicos (2)
+
+
+-- 8. Quantos vendedores existem em cada estado?
+
+SELECT 
+  seller_state AS estado,
+  COUNT(DISTINCT seller_id) AS qnt_vendedor
+FROM estudo-sql-461713.olist_dados.olist_sellers
+GROUP BY estado
+ORDER BY qnt_vendedor DESC;
+
+/*  SP, PR, MG, SC e RJ são os estados com maior quantidade de vendedores.
+    Estados do norte e nordeste como MA, AC, PI, AM e PA possuem apenas um 1 vendedor. */
+
+-- 9. Quantos clientes existem em cada estado?
+SELECT 
+  customer_state AS estado,
+  COUNT(DISTINCT customer_unique_id) AS qnt_cliente
+FROM estudo-sql-461713.olist_dados.olist_customer
+GROUP BY estado
+ORDER BY qnt_cliente DESC;
+
+/*  SP, RJ, MG, SC e RJ são os estados com maior quantidade de clientes.
+    Estados do norte e nordeste como RR,AP, AC, AM e RO possuem menos clientes. */
+-- 
+
+-- 10. Qual é a pontuação média de avaliação dada pelos clientes?
+/*SELECT
+  AVG(r.review_score)
+FROM olist.orders AS o
+LEFT JOIN olist.reviews AS r
+ON o.order_id = r.order_id
+-- A avaliação média está entre 4 e 5 estrelas.*/
+
+-- 11. Qual é o valor médio do frete por pedido?
+WITH valor AS(
+  SELECT
+    order_id,
+    SUM(freight_value) AS frete
+  FROM estudo-sql-461713.olist_dados.olist_order_items
+  GROUP BY order_id
+)
+SELECT
+  AVG(frete)
+FROM valor;
+-- A média do valor por pedido é de aproximadamente R$23.
