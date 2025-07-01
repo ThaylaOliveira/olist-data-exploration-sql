@@ -51,7 +51,7 @@ Foram respondidas mais de 39 perguntas usando SQL, entre elas:
 - Quantos pedidos foram entregues com atraso?
 - Qual vendedor tem o maior valor médio de pedido?
 
-*A lista completa de perguntas está disponível no arquivo [`olist_queries.sql`](1-business-questions.txt).*
+*A lista completa de perguntas está disponível no arquivo [`olist_queries.sql`](https://github.com/ThaylaOliveira/olist-data-exploration-sql/blob/main/1-business_questions.txt).*
 
 ---
 
