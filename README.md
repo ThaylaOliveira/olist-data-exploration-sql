@@ -1,6 +1,6 @@
-# Olist SQL Analytics — BigQuery + Power BI
+# Olist SQL Analytics — BigQuery + Looker
 
-Este projeto tem como objetivo explorar a base pública da Olist utilizando SQL no Google BigQuery para responder perguntas analíticas sobre comportamento de clientes, logística, vendas e avaliações. Posteriormente, os resultados serão visualizados em dashboards com Power BI.
+Este projeto tem como objetivo explorar a base pública da Olist utilizando SQL no Google BigQuery para responder perguntas analíticas sobre comportamento de clientes, logística, vendas e avaliações. Posteriormente, os resultados serão visualizados em dashboards com Looker.
 
 ---
 
@@ -8,7 +8,7 @@ Este projeto tem como objetivo explorar a base pública da Olist utilizando SQL 
 
 - Realizar uma análise exploratória dos dados com SQL em ambiente cloud (BigQuery)
 - Praticar perguntas analíticas com foco em produto, logística e cliente
-- Visualizar os insights em um dashboard no Power BI
+- Visualizar os insights em um dashboard no Looker
 
 ---
 
