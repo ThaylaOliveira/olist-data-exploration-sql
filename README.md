@@ -15,7 +15,7 @@ Este projeto tem como objetivo explorar a base pública da Olist utilizando SQL 
 ## 📊 Stack utilizada
 
 - **Google BigQuery (SQL)**
-- **Power BI** para visualização
+- *(Planejado)* **Looker** para visualização
 - *(Planejado)* Python para EDA visual com gráficos
 
 ---
@@ -58,8 +58,7 @@ Foram respondidas mais de 39 perguntas usando SQL, entre elas:
 ## 📌 Próximas etapas
 
 - Criar uma análise visual exploratória com Python
-- Construir um dashboard no Power BI com KPIs e filtros interativos
-- Publicar prints e link do dashboard (quando pronto)
+- Construir um dashboard no Looker com KPIs e filtros interativos
 
 ---
 
